@@ -1,14 +1,10 @@
-import random
+from Triangulo import Triangulo
 
-hipotenusa = random.randint(5,15)
+triangulo = Triangulo()
 
-print("Hipotenusa: ", hipotenusa)
+triangulo.hipotenusaAleatoria()
+print("Hipotenusa: ", triangulo.obtenerHipotenusa())
 
-catetoA = 0
-
-while catetoA <= 0 or catetoA >= hipotenusa:
-    catetoA = int(input(f"Ingresa un numero mayor que 0 menor que la hipotenusa [0 < X < {hipotenusa}]: "))
-
-catetoB = pow((hipotenusa ** 2) - (catetoA ** 2), 1/2)
-
-print("Cateto B: ", catetoB)
+triangulo.solicitarLadoA()
+triangulo.calcularCateto()
+print("Lado B: ", triangulo.obtenerLadoB())
