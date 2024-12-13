@@ -25,6 +25,8 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 raise SystemExit
+            
+    pygame.draw.polygon(pantalla, 'white', [(100, 100), (200, 100), (100, 0)], 0)
 
     pygame.display.flip()
     clock.tick(FRAME)
