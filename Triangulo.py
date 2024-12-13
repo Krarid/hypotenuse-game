@@ -1,7 +1,6 @@
 import random
 
 class Triangulo:
-    hipotenusa = 0
 
     def __init__(self):
         self.hipotenusa = 0
@@ -26,3 +25,12 @@ class Triangulo:
     
     def obtenerLadoB(self):
         return self.ladoB
+    
+#triangulo = Triangulo()
+
+#triangulo.hipotenusaAleatoria()
+#print("Hipotenusa: ", triangulo.obtenerHipotenusa())
+
+#triangulo.solicitarLadoA()
+#triangulo.calcularCateto()
+#print("Lado B: ", triangulo.obtenerLadoB())

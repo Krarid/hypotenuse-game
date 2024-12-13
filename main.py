@@ -1,10 +1,30 @@
+import pygame
+
+# Importa solo las teclas que pueden ser presionadas
+from pygame.locals import (
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT
+)
 from Triangulo import Triangulo
+from configuracion import PANTALLA_ALTO, PANTALLA_ANCHO, FRAME
 
-triangulo = Triangulo()
+pantalla = pygame.display.set_mode((PANTALLA_ANCHO,PANTALLA_ALTO))
+clock = pygame.time.Clock()
 
-triangulo.hipotenusaAleatoria()
-print("Hipotenusa: ", triangulo.obtenerHipotenusa())
+while True:
 
-triangulo.solicitarLadoA()
-triangulo.calcularCateto()
-print("Lado B: ", triangulo.obtenerLadoB())
+    # Procesa eventos
+    for event in pygame.event.get():
+
+        if event.type == QUIT:
+            pygame.quit()
+            raise SystemExit
+
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                pygame.quit()
+                raise SystemExit
+
+    pygame.display.flip()
+    clock.tick(FRAME)
