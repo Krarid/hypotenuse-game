@@ -17,6 +17,9 @@ class Triangulo:
         while self.ladoA <= 0 or self.ladoA >= self.hipotenusa:
             self.ladoA = int(input(f"Ingresa un numero mayor que 0 menor que la hipotenusa [0 < X < {self.hipotenusa}]: "))
 
+    def ingresarLadoA(self, ladoA):
+        self.ladoA = ladoA
+
     def obtenerHipotenusa(self):
         return self.hipotenusa
     
