@@ -11,7 +11,7 @@ class Triangulo:
         self.ladoB = pow((self.hipotenusa ** 2) - (self.ladoA ** 2), 1/2)
 
     def hipotenusaAleatoria(self):
-        self.hipotenusa = random.randint(5,15)
+        self.hipotenusa = random.randint(10,20)
 
     def solicitarLadoA(self):
         while self.ladoA <= 0 or self.ladoA >= self.hipotenusa:
