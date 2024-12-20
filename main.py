@@ -27,6 +27,7 @@ clock = pygame.time.Clock()
 
 triangulo = Triangulo()
 triangulo.hipotenusaAleatoria()
+hipotenusa = triangulo.obtenerHipotenusa()
 
 posX = PANTALLA_ANCHO
 posY = PANTALLA_ALTO
@@ -55,12 +56,14 @@ while True:
                 raise SystemExit
 
             if event.key == K_RETURN:
+                hipotenusa = triangulo.obtenerHipotenusa()
+                
                 print("Lado A: ", textinput.value)
                 triangulo.ingresarLadoA(int(textinput.value))
                 triangulo.calcularCateto()
 
                 print(f'Lado B: {triangulo.obtenerLadoB()}')
-                print(f'Hipotenusa: {triangulo.obtenerHipotenusa()}', end='\n\n')
+                print(f'Hipotenusa: {hipotenusa}', end='\n\n')
 
                 textinput.value = ''
 
@@ -97,7 +100,7 @@ while True:
     ladoB_numero = numero.render(f'{round(triangulo.obtenerLadoB(),2)}', True, (255, 0, 0))
     pantalla.blit(ladoB_numero, (triangulo.ladoB * 5 + posX - 12, posY + triangulo.ladoA * 10 + 5))
 
-    hipotenusa_numero = numero.render(f'{triangulo.obtenerHipotenusa()}', True, (255, 0, 0))
+    hipotenusa_numero = numero.render(f'{hipotenusa}', True, (255, 0, 0))
     pantalla.blit(hipotenusa_numero, (triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5))
 
     # Renderiza la pantalla
