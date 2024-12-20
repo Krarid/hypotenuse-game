@@ -94,13 +94,13 @@ while True:
     (posX + triangulo.ladoB * 10, triangulo.ladoA * 10 + posY)], 0)
 
     # Dibuja los lados del triangulo generado
-    ladoA_numero = numero.render(f'{triangulo.obtenerLadoA()}', True, (255, 0, 0))
+    ladoA_numero = numero.render(f'{triangulo.obtenerLadoA()}', True, (255, 102, 102))
     pantalla.blit(ladoA_numero, (posX - 17, triangulo.ladoA * 5 + posY))
 
-    ladoB_numero = numero.render(f'{round(triangulo.obtenerLadoB(),2)}', True, (255, 0, 0))
+    ladoB_numero = numero.render(f'{round(triangulo.obtenerLadoB(),2)}', True, (255, 102, 102))
     pantalla.blit(ladoB_numero, (triangulo.ladoB * 5 + posX - 12, posY + triangulo.ladoA * 10 + 5))
 
-    hipotenusa_numero = numero.render(f'{hipotenusa}', True, (255, 0, 0))
+    hipotenusa_numero = numero.render(f'{hipotenusa}', True, (255, 102, 102))
     pantalla.blit(hipotenusa_numero, (triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5))
 
     # Renderiza la pantalla
