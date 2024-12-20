@@ -95,7 +95,7 @@ while True:
                 
                 # Posicion aleatoria para el triangulo
                 posX = random.randint(0, 1100)
-                posY = random.randint(0, 500)
+                posY = random.randint(0, 360) + 80
 
                 # Asigna la posicion del triangulo
                 triangulo.ingresarPosicionX(posX)
