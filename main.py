@@ -25,6 +25,7 @@ pygame.font.init()
 
 texto = pygame.font.Font(None, 36)
 numeroTexto = pygame.font.Font(None, 20)
+titulo = pygame.font.Font(None, 60)
 
 def crearTextoNumerico(numero, posX, posY):
     numeroSurf = numeroTexto.render(f'{numero}', True, (255, 102, 102))
@@ -45,6 +46,10 @@ ladoB = 0
 
 posX = PANTALLA_ANCHO
 posY = PANTALLA_ALTO
+
+# Initializing Color
+blanco = (255,255,255)
+negro = (0,0,0)
 
 while True:
     # Color negro del espacio
@@ -70,11 +75,12 @@ while True:
                 raise SystemExit
 
             if event.key == K_RETURN:
-                
-                print("Lado A: ", textinput.value)
+                # Calcula los lados del triangulo
                 ladoA = int(textinput.value)
                 ladoB = calcularCateto(hipotenusa, ladoA)
 
+                # Imprime los lados e hipotenusa
+                print("Lado A: ", textinput.value)
                 print(f'Lado B: {ladoB}')
                 print(f'Hipotenusa: {hipotenusa}', end='\n\n')
 
@@ -91,6 +97,7 @@ while True:
                 posX = random.randint(0, 1100)
                 posY = random.randint(0, 500)
 
+                # Asigna la posicion del triangulo
                 triangulo.ingresarPosicionX(posX)
                 triangulo.ingresarPosicionY(posY)
 
@@ -103,16 +110,23 @@ while True:
                 numero = crearTextoNumerico(round(triangulo.obtenerLadoB(),2), triangulo.ladoB * 5 + posX - 12, posY + triangulo.ladoA * 10 + 12)
                 numeros.add(numero)
 
-                numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5)
+                numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5 - 5)
                 numeros.add(numero)
             
+    # Muestra el titulo del jueego
+    tituloTexto = titulo.render("Juego de la hipotenusa", True, blanco)
+    pantalla.blit(tituloTexto, (400, 20))
+
     # Muestra la hipotenusa
-    hipotenusa_texto = texto.render(f'Hipotenusa: {hipotenusa}', True, (255, 255, 255))
+    hipotenusa_texto = texto.render(f'Hipotenusa: {hipotenusa}', True, blanco)
     pantalla.blit(hipotenusa_texto, (10, 650))
 
     # Pide un lado del triangulo rectangulo
-    hipotenusa_texto = texto.render('Lado A: ', True, (255, 255, 255))
+    hipotenusa_texto = texto.render('Lado A: ', True, blanco)
     pantalla.blit(hipotenusa_texto, (10, 680))
+    
+    # Pantalla de dibujo
+    pygame.draw.rect(pantalla, blanco, pygame.Rect(0, 80, PANTALLA_ANCHO, PANTALLA_ALTO - 200))
 
     # Dibuja todos los triangulos creados hasta el momento
     for entity in triangulos:

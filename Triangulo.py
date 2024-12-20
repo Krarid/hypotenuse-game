@@ -33,7 +33,7 @@ class Triangulo(pygame.sprite.Sprite):
         return self.ladoB
 
     def draw(self, pantalla):
-        pygame.draw.polygon(pantalla, 'white', 
+        pygame.draw.polygon(pantalla, (0, 0, 255), 
         [(self.posX, self.posY), # 
         (self.posX, self.ladoA * 10 + self.posY), 
         (self.posX + self.ladoB * 10, self.ladoA * 10 + self.posY)], 0)
