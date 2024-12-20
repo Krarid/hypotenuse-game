@@ -11,13 +11,24 @@ from pygame.locals import (
 )
 
 from Triangulo import Triangulo
+from Numero import Numero
 from configuracion import PANTALLA_ALTO, PANTALLA_ANCHO, FRAME
+
+def hipotenusaAleatoria():
+    return random.randint(10,20)
+
+def calcularCateto(hipotenusa, ladoA):
+    return pow((hipotenusa ** 2) - (ladoA ** 2), 1/2)
 
 pygame.init()
 pygame.font.init()
 
 texto = pygame.font.Font(None, 36)
-numero = pygame.font.Font(None, 20)
+numeroTexto = pygame.font.Font(None, 20)
+
+def crearTextoNumerico(numero, posX, posY):
+    numeroSurf = numeroTexto.render(f'{numero}', True, (255, 102, 102))
+    return Numero(numeroSurf, posX, posY)
 
 # Create TextInput-object
 textinput = pygame_textinput.TextInputVisualizer(font_color='white',cursor_color= (255, 255, 255))
@@ -25,9 +36,12 @@ textinput = pygame_textinput.TextInputVisualizer(font_color='white',cursor_color
 pantalla = pygame.display.set_mode((PANTALLA_ANCHO,PANTALLA_ALTO))
 clock = pygame.time.Clock()
 
-triangulo = Triangulo()
-triangulo.hipotenusaAleatoria()
-hipotenusa = triangulo.obtenerHipotenusa()
+triangulos = pygame.sprite.Group()
+numeros = pygame.sprite.Group()
+
+hipotenusa = hipotenusaAleatoria()
+ladoA = 0
+ladoB = 0
 
 posX = PANTALLA_ANCHO
 posY = PANTALLA_ALTO
@@ -41,7 +55,7 @@ while True:
     # Feed it with events every frame
     textinput.update(events)
     # Blit its surface onto the screen
-    pantalla.blit(textinput.surface, (158, 600))
+    pantalla.blit(textinput.surface, (158, 680))
 
     # Procesa eventos
     for event in events:
@@ -56,52 +70,57 @@ while True:
                 raise SystemExit
 
             if event.key == K_RETURN:
-                hipotenusa = triangulo.obtenerHipotenusa()
                 
                 print("Lado A: ", textinput.value)
-                triangulo.ingresarLadoA(int(textinput.value))
-                triangulo.calcularCateto()
+                ladoA = int(textinput.value)
+                ladoB = calcularCateto(hipotenusa, ladoA)
 
-                print(f'Lado B: {triangulo.obtenerLadoB()}')
+                print(f'Lado B: {ladoB}')
                 print(f'Hipotenusa: {hipotenusa}', end='\n\n')
 
+                triangulo = Triangulo(ladoB, ladoA)
+                triangulo.ingresarHipotenusa(hipotenusa)
+
+                # Si el usuario presiona enter entonces borra el contenido del input
                 textinput.value = ''
 
                 # Genera una hipotenusa aleatoria para el proximo triangulo
-                triangulo.hipotenusaAleatoria()
+                hipotenusa = hipotenusaAleatoria()
                 
                 # Posicion aleatoria para el triangulo
                 posX = random.randint(0, 1100)
                 posY = random.randint(0, 500)
 
+                triangulo.ingresarPosicionX(posX)
+                triangulo.ingresarPosicionY(posY)
+
+                triangulos.add(triangulo)
+
+                # Lados e hipotenusa del triangulo
+                numero = crearTextoNumerico(triangulo.obtenerLadoA(), posX - 12, triangulo.ladoA * 5 + posY)
+                numeros.add(numero)
+
+                numero = crearTextoNumerico(round(triangulo.obtenerLadoB(),2), triangulo.ladoB * 5 + posX - 12, posY + triangulo.ladoA * 10 + 12)
+                numeros.add(numero)
+
+                numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5)
+                numeros.add(numero)
             
     # Muestra la hipotenusa
-    hipotenusa_texto = texto.render(f'Hipotenusa: {triangulo.obtenerHipotenusa()}', True, (255, 255, 255))
-    pantalla.blit(hipotenusa_texto, (10, 570))
+    hipotenusa_texto = texto.render(f'Hipotenusa: {hipotenusa}', True, (255, 255, 255))
+    pantalla.blit(hipotenusa_texto, (10, 650))
 
     # Pide un lado del triangulo rectangulo
     hipotenusa_texto = texto.render('Lado A: ', True, (255, 255, 255))
-    pantalla.blit(hipotenusa_texto, (10, 600))
+    pantalla.blit(hipotenusa_texto, (10, 680))
 
-    # Muestra el lado B
-    ladoB_texto = texto.render(f'Lado B: {triangulo.obtenerLadoB()}', True, (255, 255, 255))
-    pantalla.blit(ladoB_texto, (10, 630))
+    # Dibuja todos los triangulos creados hasta el momento
+    for entity in triangulos:
+        entity.draw(pantalla)
 
-    # Dibuja el triangulo
-    pygame.draw.polygon(pantalla, 'white', 
-    [(posX, posY), # 
-    (posX, triangulo.ladoA * 10 + posY), 
-    (posX + triangulo.ladoB * 10, triangulo.ladoA * 10 + posY)], 0)
-
-    # Dibuja los lados del triangulo generado
-    ladoA_numero = numero.render(f'{triangulo.obtenerLadoA()}', True, (255, 102, 102))
-    pantalla.blit(ladoA_numero, (posX - 17, triangulo.ladoA * 5 + posY))
-
-    ladoB_numero = numero.render(f'{round(triangulo.obtenerLadoB(),2)}', True, (255, 102, 102))
-    pantalla.blit(ladoB_numero, (triangulo.ladoB * 5 + posX - 12, posY + triangulo.ladoA * 10 + 5))
-
-    hipotenusa_numero = numero.render(f'{hipotenusa}', True, (255, 102, 102))
-    pantalla.blit(hipotenusa_numero, (triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5))
+    # Dibuja todos los numeros creados hasta el momento
+    for n in numeros:
+        pantalla.blit(n.surf, n.rect)
 
     # Renderiza la pantalla
     pygame.display.flip()

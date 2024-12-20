@@ -1,24 +1,27 @@
+import pygame
 import random
 
-class Triangulo:
+class Triangulo(pygame.sprite.Sprite):
 
-    def __init__(self):
+    def __init__(self, ladoB, ladoA):
+        super(Triangulo, self).__init__()
         self.hipotenusa = 0
-        self.ladoA = 0
-        self.ladoB = 0
-
-    def calcularCateto(self):
-        self.ladoB = pow((self.hipotenusa ** 2) - (self.ladoA ** 2), 1/2)
-
-    def hipotenusaAleatoria(self):
-        self.hipotenusa = random.randint(10,20)
-
-    def solicitarLadoA(self):
-        while self.ladoA <= 0 or self.ladoA >= self.hipotenusa:
-            self.ladoA = int(input(f"Ingresa un numero mayor que 0 menor que la hipotenusa [0 < X < {self.hipotenusa}]: "))
+        self.ladoA = ladoA
+        self.ladoB = ladoB
+        self.surf = pygame.Surface((self.ladoB, self.ladoA))
+        self.rect = self.surf.get_rect()
 
     def ingresarLadoA(self, ladoA):
         self.ladoA = ladoA
+
+    def ingresarHipotenusa(self, hipotenusa):
+        self.hipotenusa = hipotenusa
+
+    def ingresarPosicionX(self, posX):
+        self.posX = posX
+
+    def ingresarPosicionY(self, posY):
+        self.posY = posY
 
     def obtenerHipotenusa(self):
         return self.hipotenusa
@@ -28,6 +31,12 @@ class Triangulo:
     
     def obtenerLadoB(self):
         return self.ladoB
+
+    def draw(self, pantalla):
+        pygame.draw.polygon(pantalla, 'white', 
+        [(self.posX, self.posY), # 
+        (self.posX, self.ladoA * 10 + self.posY), 
+        (self.posX + self.ladoB * 10, self.ladoA * 10 + self.posY)], 0)
     
 #triangulo = Triangulo()
 
