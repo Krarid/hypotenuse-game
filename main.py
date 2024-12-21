@@ -11,12 +11,15 @@ from pygame.locals import (
 )
 
 from Triangulo import Triangulo
+from Cuadrado import Cuadrado
 from Numero import Numero
 from configuracion import PANTALLA_ALTO, PANTALLA_ANCHO, FRAME
 
+# Genera una hipotenusa aleatoria
 def hipotenusaAleatoria():
     return random.randint(10,20)
 
+# Calcula el catego en base a la hipotenusa y otro cateto
 def calcularCateto(hipotenusa, ladoA):
     return pow((hipotenusa ** 2) - (ladoA ** 2), 1/2)
 
@@ -27,11 +30,12 @@ texto = pygame.font.Font(None, 36)
 numeroTexto = pygame.font.Font(None, 20)
 titulo = pygame.font.Font(None, 60)
 
+# Funcion para crear numeros en la pantalla
 def crearTextoNumerico(numero, posX, posY):
     numeroSurf = numeroTexto.render(f'{numero}', True, (255, 102, 102))
     return Numero(numeroSurf, posX, posY)
 
-# Create TextInput-object
+# Crea el objeto para el ingreso de texto en Pygame
 textinput = pygame_textinput.TextInputVisualizer(font_color='white',cursor_color= (255, 255, 255))
 
 pantalla = pygame.display.set_mode((PANTALLA_ANCHO,PANTALLA_ALTO))
@@ -39,6 +43,7 @@ clock = pygame.time.Clock()
 
 triangulos = pygame.sprite.Group()
 numeros = pygame.sprite.Group()
+cuadrados = pygame.sprite.Group()
 
 hipotenusa = hipotenusaAleatoria()
 ladoA = 0
@@ -80,8 +85,10 @@ while True:
             if event.key == K_RETURN:
                 # Calcula los lados del triangulo
                 try:
+                    # Si se ingresa texto entonces manda una excepcion y repite el proceso
                     ladoA = int(textinput.value)
 
+                    # Si se ingresa un lado menor que 0 o mayor o igual que la hipotenusa entonces muestra error y reinicia
                     if(not(ladoA > 0 and ladoA < hipotenusa)):
                         raise ValueError
 
@@ -109,6 +116,20 @@ while True:
 
                     triangulos.add(triangulo)
 
+                    # Detecta si el triangulo dibujado ha colisionado con otros
+                    for trianguloActual in triangulos:
+                        sprite_collide = pygame.sprite.spritecollide(trianguloActual, triangulos, False)
+                        if len(sprite_collide) > 1:
+                            for sprite in sprite_collide:
+                                colision = True
+                    
+                    if colision:
+                        triangulos.remove(triangulo)
+                        triangulo.kill()
+                        cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (255,0,0)))
+                    else:
+                        cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (0,0,0)))
+
                     # Lados e hipotenusa del triangulo
                     numero = crearTextoNumerico(triangulo.obtenerLadoA(), posX - 12, triangulo.ladoA * 5 + posY)
                     numeros.add(numero)
@@ -118,15 +139,6 @@ while True:
 
                     numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5 - 5)
                     numeros.add(numero)
-
-                    # Colisiones
-                    for tri in triangulos:
-                        sprite_collide = pygame.sprite.spritecollide(tri, triangulos, False)
-
-                        # If len(sprite_collide) is 1. It collide with self.
-                        if len(sprite_collide) > 1:
-                            for sprite in sprite_collide:
-                                colision = True
 
                     mostrar_error = False
                 except:
@@ -156,6 +168,7 @@ while True:
     if colision:
         colision_texto = texto.render(f'Colision', True, (255, 0, 0))
         pantalla.blit(colision_texto, (500, 620))
+        colision = False
 
     # Pantalla de dibujo
     pygame.draw.rect(pantalla, blanco, pygame.Rect(0, 80, PANTALLA_ANCHO, PANTALLA_ALTO - 200))
@@ -167,6 +180,10 @@ while True:
     # Dibuja todos los numeros creados hasta el momento
     for n in numeros:
         pantalla.blit(n.surf, n.rect)
+
+    # Dibuja todos los cuadrados creados hasta el momento
+    for c in cuadrados:
+        c.draw(pantalla)
 
     # Renderiza la pantalla
     pygame.display.flip()

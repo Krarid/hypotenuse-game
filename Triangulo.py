@@ -9,7 +9,7 @@ class Triangulo(pygame.sprite.Sprite):
         self.ladoA = ladoA
         self.ladoB = ladoB
         self.surf = pygame.Surface((self.ladoB * 10, self.ladoA * 10))
-        self.rect = self.surf.get_rect(center = (posX, posY))
+        self.rect = self.surf.get_rect(topleft = (posX, posY))
 
     def ingresarLadoA(self, ladoA):
         self.ladoA = ladoA
@@ -37,12 +37,3 @@ class Triangulo(pygame.sprite.Sprite):
         [(self.posX, self.posY), # 
         (self.posX, self.ladoA * 10 + self.posY), 
         (self.posX + self.ladoB * 10, self.ladoA * 10 + self.posY)], 0)
-    
-#triangulo = Triangulo()
-
-#triangulo.hipotenusaAleatoria()
-#print("Hipotenusa: ", triangulo.obtenerHipotenusa())
-
-#triangulo.solicitarLadoA()
-#triangulo.calcularCateto()
-#print("Lado B: ", triangulo.obtenerLadoB())
