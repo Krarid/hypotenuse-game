@@ -3,13 +3,13 @@ import random
 
 class Triangulo(pygame.sprite.Sprite):
 
-    def __init__(self, ladoB, ladoA):
+    def __init__(self, ladoB, ladoA, posX, posY):
         super(Triangulo, self).__init__()
         self.hipotenusa = 0
         self.ladoA = ladoA
         self.ladoB = ladoB
-        self.surf = pygame.Surface((self.ladoB, self.ladoA))
-        self.rect = self.surf.get_rect()
+        self.surf = pygame.Surface((self.ladoB * 10, self.ladoA * 10))
+        self.rect = self.surf.get_rect(center = (posX, posY))
 
     def ingresarLadoA(self, ladoA):
         self.ladoA = ladoA

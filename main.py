@@ -52,6 +52,7 @@ blanco = (255,255,255)
 negro = (0,0,0)
 
 mostrar_error = False
+colision = False
 
 while True:
     # Color negro del espacio
@@ -91,15 +92,16 @@ while True:
                     print(f'Lado B: {ladoB}')
                     print(f'Hipotenusa: {hipotenusa}', end='\n\n')
 
-                    triangulo = Triangulo(ladoB, ladoA)
+                    # Posicion aleatoria para el triangulo
+                    posX = random.randint(0, 1100)
+                    posY = random.randint(0, 360) + 80
+
+                    # Crea el triangulo
+                    triangulo = Triangulo(ladoB, ladoA, posX, posY)
                     triangulo.ingresarHipotenusa(hipotenusa)
 
                     # Genera una hipotenusa aleatoria para el proximo triangulo
                     hipotenusa = hipotenusaAleatoria()
-                    
-                    # Posicion aleatoria para el triangulo
-                    posX = random.randint(0, 1100)
-                    posY = random.randint(0, 360) + 80
 
                     # Asigna la posicion del triangulo
                     triangulo.ingresarPosicionX(posX)
@@ -116,6 +118,15 @@ while True:
 
                     numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5 - 5)
                     numeros.add(numero)
+
+                    # Colisiones
+                    for tri in triangulos:
+                        sprite_collide = pygame.sprite.spritecollide(tri, triangulos, False)
+
+                        # If len(sprite_collide) is 1. It collide with self.
+                        if len(sprite_collide) > 1:
+                            for sprite in sprite_collide:
+                                colision = True
 
                     mostrar_error = False
                 except:
@@ -140,7 +151,12 @@ while True:
     if mostrar_error:
         error_texto = texto.render(f'Error: el cateto debe ser mayor que 0 y menor que la longitud de la hipotenusa', True, (255, 0, 0))
         pantalla.blit(error_texto, (10, 680))
-    
+
+    # Muestra error de colision si es necesario (debug)
+    if colision:
+        colision_texto = texto.render(f'Colision', True, (255, 0, 0))
+        pantalla.blit(colision_texto, (500, 620))
+
     # Pantalla de dibujo
     pygame.draw.rect(pantalla, blanco, pygame.Rect(0, 80, PANTALLA_ANCHO, PANTALLA_ALTO - 200))
 
