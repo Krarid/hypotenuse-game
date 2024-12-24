@@ -66,7 +66,9 @@ while True:
     events = pygame.event.get()
 
     # Feed it with events every frame
-    textinput.update(events)
+
+    if(not(colision)):
+        textinput.update(events)
     # Blit its surface onto the screen
     pantalla.blit(textinput.surface, (158, 650))
 
@@ -85,6 +87,9 @@ while True:
             if event.key == K_RETURN:
                 # Calcula los lados del triangulo
                 try:
+                    if(colision):
+                        raise ValueError
+                    
                     # Si se ingresa texto entonces manda una excepcion y repite el proceso
                     ladoA = int(textinput.value)
 
@@ -99,36 +104,41 @@ while True:
                     print(f'Lado B: {ladoB}')
                     print(f'Hipotenusa: {hipotenusa}', end='\n\n')
 
-                    # Posicion aleatoria para el triangulo
-                    posX = random.randint(0, 1100)
-                    posY = random.randint(0, 360) + 80
+                    i = 1
 
-                    # Crea el triangulo
-                    triangulo = Triangulo(ladoB, ladoA, posX, posY)
-                    triangulo.ingresarHipotenusa(hipotenusa)
+                    while(True and i <= 1000):
+                        colision = False
 
-                    # Genera una hipotenusa aleatoria para el proximo triangulo
-                    hipotenusa = hipotenusaAleatoria()
+                        # Posicion aleatoria para el triangulo
+                        posX = random.randint(0, 1200)
+                        posY = random.randint(0, 360) + 80
 
-                    # Asigna la posicion del triangulo
-                    triangulo.ingresarPosicionX(posX)
-                    triangulo.ingresarPosicionY(posY)
+                        # Crea el triangulo
+                        triangulo = Triangulo(ladoB, ladoA, posX, posY)
+                        triangulo.ingresarHipotenusa(hipotenusa)
 
-                    triangulos.add(triangulo)
+                        # Asigna la posicion del triangulo
+                        triangulo.ingresarPosicionX(posX)
+                        triangulo.ingresarPosicionY(posY)
 
-                    # Detecta si el triangulo dibujado ha colisionado con otros
-                    for trianguloActual in triangulos:
-                        sprite_collide = pygame.sprite.spritecollide(trianguloActual, triangulos, False)
-                        if len(sprite_collide) > 1:
-                            for sprite in sprite_collide:
-                                colision = True
-                    
-                    if colision:
-                        triangulos.remove(triangulo)
-                        triangulo.kill()
-                        cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (255,0,0)))
-                    else:
-                        cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (0,0,0)))
+                        triangulos.add(triangulo)
+
+                        # Detecta si el triangulo dibujado ha colisionado con otros
+                        for trianguloActual in triangulos:
+                            sprite_collide = pygame.sprite.spritecollide(trianguloActual, triangulos, False)
+                            if len(sprite_collide) > 1:
+                                for sprite in sprite_collide:
+                                    colision = True
+                        
+                        # Si se detecta una colision con algun otro triangulo entonces elimina el triangulo actual
+                        if colision:
+                            triangulos.remove(triangulo)
+                            triangulo.kill()
+                            i += 1
+                            #cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (255,0,0)))
+                        else:
+                            #cuadrados.add(Cuadrado(ladoB, ladoA, posX, posY, (0,0,0)))
+                            break
 
                     # Lados e hipotenusa del triangulo
                     numero = crearTextoNumerico(triangulo.obtenerLadoA(), posX - 12, triangulo.ladoA * 5 + posY)
@@ -139,6 +149,9 @@ while True:
 
                     numero = crearTextoNumerico(triangulo.obtenerHipotenusa(), triangulo.ladoB * 5 + posX + 10, posY + triangulo.ladoA * 5 - 5)
                     numeros.add(numero)
+
+                    # Genera una hipotenusa aleatoria para el proximo triangulo
+                    hipotenusa = hipotenusaAleatoria()
 
                     mostrar_error = False
                 except:
@@ -151,24 +164,27 @@ while True:
     tituloTexto = titulo.render("Juego de la hipotenusa", True, blanco)
     pantalla.blit(tituloTexto, (400, 20))
 
-    # Muestra la hipotenusa
-    hipotenusa_texto = texto.render(f'Hipotenusa: {hipotenusa}', True, blanco)
-    pantalla.blit(hipotenusa_texto, (10, 620))
+    if not(colision):
+        # Muestra la hipotenusa
+        hipotenusa_texto = texto.render(f'Hipotenusa: {hipotenusa}', True, blanco)
+        pantalla.blit(hipotenusa_texto, (10, 620))
 
-    # Pide un lado del triangulo rectangulo
-    hipotenusa_texto = texto.render('Lado A: ', True, blanco)
-    pantalla.blit(hipotenusa_texto, (10, 650))
+        # Pide un lado del triangulo rectangulo
+        hipotenusa_texto = texto.render('Lado A: ', True, blanco)
+        pantalla.blit(hipotenusa_texto, (10, 650))
 
     # Muestra error si es necesario
-    if mostrar_error:
+    if mostrar_error and not(colision):
         error_texto = texto.render(f'Error: el cateto debe ser mayor que 0 y menor que la longitud de la hipotenusa', True, (255, 0, 0))
         pantalla.blit(error_texto, (10, 680))
 
     # Muestra error de colision si es necesario (debug)
     if colision:
-        colision_texto = texto.render(f'Colision', True, (255, 0, 0))
-        pantalla.blit(colision_texto, (500, 620))
-        colision = False
+        colision_texto = texto.render(f'Has perdido! No hay suficiente espacio para colocar triangulos', True, (255, 0, 0))
+        pantalla.blit(colision_texto, (200, 650))
+
+        total_triangulos = texto.render(f'Has colocado un total de {triangulos.__len__()} triangulos', True, (255, 0, 0))
+        pantalla.blit(total_triangulos, (200, 680))
 
     # Pantalla de dibujo
     pygame.draw.rect(pantalla, blanco, pygame.Rect(0, 80, PANTALLA_ANCHO, PANTALLA_ALTO - 200))
